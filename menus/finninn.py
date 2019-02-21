@@ -11,9 +11,9 @@ class FinnInn(Menu):
         self.menu = {}
         # swedish day of week names
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
-    
+
     def __repr__(self):
-        return ":finngiant: Finn Inn"
+        return ":male_zombie: Finn Inn"
 
     def get_week(self):
         """
@@ -35,7 +35,7 @@ class FinnInn(Menu):
 
             # add the list of dishes to the menu
             self.menu[weekday] = dishes.strip().split('\n')
-        
+
         return self.menu
 
     def get_day(self, dow):
@@ -46,7 +46,7 @@ class FinnInn(Menu):
         # If the menu hasn't been fetched, do it, it will be cached.
         if self.menu == {}:
             self.get_week()
-        
+
         dow_name = self.dow[dow]
         if dow_name not in self.menu:
             return ['404 - Food not found']

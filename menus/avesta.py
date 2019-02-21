@@ -8,9 +8,9 @@ class Avesta(Menu):
         self.menu = {}
         # swedish day of week names
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
-    
+
     def __repr__(self):
-        return ":pizza: Avesta Pizzeria"
+        return "Avesta Pizzeria"
 
     def get_week(self):
         """ Only eat pizza on fridays """
@@ -25,7 +25,7 @@ class Avesta(Menu):
         # If the menu hasn't been fetched, do it, it will be cached.
         if self.menu == {}:
             self.get_week()
-        
+
         dow_name = self.dow[dow]
         if dow_name not in self.menu:
             return ['404 - Food not found']

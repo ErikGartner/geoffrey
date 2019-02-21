@@ -10,9 +10,9 @@ class Inspira(Menu):
         self.menu = {}
         # swedish day of week names
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
-    
+
     def __repr__(self):
-        return ":poop: Inspira"
+        return ":dollar: Inspira"
 
     def get_week(self):
         """
@@ -26,7 +26,7 @@ class Inspira(Menu):
         soup = BeautifulSoup(content.text, 'html.parser')
         # menu list
         menu_list = soup.find('div', {'class': 'owl-carousel'})
-        
+
         for li in menu_list.find_all('div', recursive=False):
             # get the day of week
             weekday = li.find('h3', {}).text.strip().lower()
@@ -45,7 +45,7 @@ class Inspira(Menu):
 
             # add the list of dishes to the menu
             self.menu[weekday] = dishes
-        
+
         return self.menu
 
     def get_day(self, dow):
@@ -56,7 +56,7 @@ class Inspira(Menu):
         # If the menu hasn't been fetched, do it, it will be cached.
         if self.menu == {}:
             self.get_week()
-        
+
         dow_name = self.dow[dow]
         if dow_name not in self.menu:
             return ['404 - Food not found']

@@ -13,9 +13,9 @@ class Bryggan(Menu):
         self.menu = collections.defaultdict(list)
         # swedish day of week names
         self.dow = {0: 'Måndag', 1: 'Tisdag', 2: 'Onsdag', 3: 'Torsdag', 4: 'Fredag'}
-    
+
     def __repr__(self):
-        return ":waterwave: Bryggan Kök och Café"
+        return ":boat: Bryggan Kök och Café"
 
     def get_week(self):
         """
@@ -45,12 +45,12 @@ class Bryggan(Menu):
                 # it was a day label, note it down so we know when we see food
                 last_day = data
                 continue
-            
+
             # if we reach here, it was probably food, anything that starts with
             # the string "Dagens:" or "Veg:" is considered food.
             if last_day and (data.startswith('Dagens:') or data.startswith('Veg:')):
                 self.menu[last_day].append(data.strip())
-        
+
         return self.menu
 
     def get_day(self, dow):
@@ -61,7 +61,7 @@ class Bryggan(Menu):
         # If the menu hasn't been fetched, do it, it will be cached.
         if self.menu == {}:
             self.get_week()
-        
+
         dow_name = self.dow[dow]
         if dow_name not in self.menu:
             return ['404 - Food not found']
