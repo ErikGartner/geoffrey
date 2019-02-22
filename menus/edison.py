@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 from menus.menu import Menu
 
+
 class Edison(Menu):
 
     def __init__(self):
@@ -11,7 +12,7 @@ class Edison(Menu):
         self.menu = {}
         # swedish day of week names
         self.dow = {0: 'monday', 1: 'tuesday', 2: 'wednesday', 3: 'thursday', 4: 'friday'}
-    
+
     def __repr__(self):
         return ":bulb: Edison"
 
@@ -44,7 +45,7 @@ class Edison(Menu):
         # If the menu hasn't been fetched, do it, it will be cached.
         if self.menu == {}:
             self.get_week()
-        
+
         dow_name = self.dow[dow]
         if dow_name not in self.menu:
             return ['404 - Food not found']

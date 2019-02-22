@@ -2,51 +2,41 @@
 
 import sys
 import os
+from os import environ as env
 import time
 import random
-import yaml
 import datetime
+import json
 import importlib
-from slackclient import SlackClient
-import schedule
 
+import schedule
+from slackclient import SlackClient
 from slack_utils import get_user_id, get_channel_id
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
+DEFAULT_MENUS = """[
+    "mop.MOP",
+    "finninn.FinnInn",
+    "bryggan.Bryggan",
+    "edison.Edison",
+    "inspira.Inspira"
+]"""
 
-# parse configuration file for slack
-with open('%s/slack_config.yaml' % dir_path, 'r') as stream:
-    try:
-        conf = yaml.load(stream)
-    except yaml.YAMLError as e:
-        print ('Could not parse configuration file')
-        print (e)
-        sys.exit(1)
+CONFIG = {
+    'BOT_NAME': env.get('BOT_NAME', 'Gordon'),
+    'BOT_ID': env.get('BOT_ID', ''),
+    'BOT_CHANNEL': env.get('BOT_CHANNEL'),
+    'BOT_CHANNEL_ID': env.get('BOT_CHANNEL_ID', ''),
+    'API_TOKEN': env.get('API_TOKEN'),
+    'MENUS': json.loads(env.get('MENUS', DEFAULT_MENUS)),
+    'POST_TIME': env.get('POST_TIME', '8:00'),
+    'UPDATE_TIME': env.get('UPDATE_TIME', '11:00')
+}
 
-# parse configuration file for geoffrey
-with open('%s/geoffrey_config.yaml' % dir_path, 'r') as stream:
-    try:
-        gconf = yaml.load(stream)
-    except yaml.YAMLError as e:
-        print ('Could not parse geoffrey_config file')
-        print (e)
-        sys.exit(1)
-
-# declare globals
-BOT_NAME = conf['BOT_NAME']
-BOT_ID = ''
 AT_BOT = ''
-BOT_CHANNEL = conf['BOT_CHANNEL']
-BOT_CHANNEL_ID = ''
-API_TOKEN = conf['API_TOKEN']
-if 'BOT_ID' in conf:
-    BOT_ID = conf['BOT_ID']
-if 'BOT_CHANNEL_ID' in conf:
-    BOT_CHANNEL_ID = conf['BOT_CHANNEL_ID']
 
 # load the menu classes dynamically
 menu_classes = []
-for menu in gconf['MENUS']:
+for menu in CONFIG['MENUS']:
     full_path = 'menus.%s' % menu
     class_data = full_path.split('.')
     mod_path = '.'.join(class_data[:-1])
@@ -56,10 +46,11 @@ for menu in gconf['MENUS']:
     menu_classes.append(cls)
 
 # set up slack connection
-slackc = SlackClient(API_TOKEN)
+slackc = SlackClient(CONFIG['API_TOKEN'])
 
 # map the day of week numbers to the actual names, in swedish
 weekdays = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
+
 
 def post_lunch(dow, channel):
     """ Posts today's menu from all included restaurants """
@@ -70,7 +61,7 @@ def post_lunch(dow, channel):
     for menu in menu_classes:
         menu_obj = menu()
         # only show Avesta menu on fridays
-        # TODO: this should be entered in the config file
+        # TODO: this should be entered in the CONFIGig file
         if dow != 4 and 'Avesta' in str(menu_obj):
             continue
         dishes = menu_obj.get_day(dow)
@@ -82,9 +73,11 @@ def post_lunch(dow, channel):
 
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
+
 def post_today(channel):
     today = datetime.datetime.today().weekday()
     post_lunch(today, channel)
+
 
 def update_lunch():
     """ Update the menu, caching it """
@@ -92,18 +85,13 @@ def update_lunch():
         # the function caches the menu
         menu().get_week()
 
+
 def post_msg(msg, channel):
     slackc.api_call('chat.postMessage', channel=channel, text=msg, as_user=True)
 
+
 def handle_command(command, channel, user):
     """ Handles mentions in channels """
-    if user not in gconf['WHITELIST']:
-        # users not in the whitelist receives a 'nice' response
-        error_msg_list = gconf['WHITELIST_ERROR_MESSAGES']
-        rnd_idx = random.randint(0, len(error_msg_list) - 1)
-        post_msg(error_msg_list[rnd_idx], channel)
-        return
-
     if command.startswith('today'):
         today = datetime.datetime.today().weekday()
         post_lunch(today, channel)
@@ -121,6 +109,7 @@ def handle_command(command, channel, user):
         msg = "\"What\" ain't no country I've ever heard of. They speak English in What?"
         post_msg(msg, channel)
 
+
 def parse_slack_output(slack_rtm_output):
     """ Parses slack output """
     output_list = slack_rtm_output
@@ -134,33 +123,34 @@ def parse_slack_output(slack_rtm_output):
 
     return None, None, None
 
+
 if __name__ == '__main__':
-    if BOT_ID == '':
-        BOT_ID = get_user_id(slackc, BOT_NAME)
-        if BOT_ID == None:
-            print ('Error: Could not get the bot ID')
+    if CONFIG['BOT_ID'] == '':
+        CONFIG['BOT_ID'] = get_user_id(slackc, CONFIG['BOT_NAME'])
+        if CONFIG['BOT_ID'] == None:
+            print('Error: Could not get the bot ID')
             sys.exit(1)
-    if BOT_CHANNEL_ID == '':
-        BOT_CHANNEL_ID = get_channel_id(slackc, BOT_CHANNEL)
-        if BOT_CHANNEL_ID == None:
+    if CONFIG['BOT_CHANNEL_ID'] == '':
+        CONFIG['BOT_CHANNEL_ID'] = get_channel_id(slackc, CONFIG['BOT_CHANNEL'])
+        if CONFIG['BOT_CHANNEL_ID'] == None:
             print ('Error: Could not get the bot channel ID')
             sys.exit(1)
 
-    # the tag when the bot is mentioned
-    AT_BOT = '<@%s>' % BOT_ID
+    AT_BOT = '<@%s>' % CONFIG['BOT_ID']
 
     # seconds to sleep between reading
     READ_DELAY = 1
 
-    UPDATE_TIME = gconf['UPDATE_TIME']
+    UPDATE_TIME = CONFIG['UPDATE_TIME']
     schedule.every().day.at(UPDATE_TIME).do(update_lunch)
+    update_lunch()
 
     # set up schedule for posting lunch
-    POST_TIME = gconf['POST_TIME']
-    schedule.every().day.at(POST_TIME).do(post_today, BOT_CHANNEL_ID)
+    POST_TIME = CONFIG['POST_TIME']
+    schedule.every().day.at(POST_TIME).do(post_today, CONFIG['BOT_CHANNEL_ID'])
 
     if slackc.rtm_connect():
-        print ('%s is ready to serve!' % BOT_NAME)
+        print('%s is ready to serve!' % CONFIG['BOT_NAME'])
         while True:
             cmd, chn, usr = parse_slack_output(slackc.rtm_read())
             if cmd and chn and usr:

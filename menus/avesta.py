@@ -1,6 +1,7 @@
 
 from menus.menu import Menu
 
+
 class Avesta(Menu):
 
     def __init__(self):
@@ -10,7 +11,7 @@ class Avesta(Menu):
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
 
     def __repr__(self):
-        return "Avesta Pizzeria"
+        return ":pizza: Avesta Pizzeria"
 
     def get_week(self):
         """ Only eat pizza on fridays """

@@ -1,7 +1,0 @@
-BOT_NAME: butler
-# BOT_ID will be fetched automatically if not given
-BOT_ID: 12345abcd
-BOT_CHANNEL: lunchoftheday
-# CHANEL_ID will be fetched automatically if not given
-BOT_CHANNEL_ID: 23456bcdef
-API_TOKEN: xxx

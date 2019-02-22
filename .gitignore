@@ -1,6 +1,5 @@
 # Private config
-slack_config.yaml
-geoffrey_config.yaml
+env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

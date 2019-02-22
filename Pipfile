@@ -15,7 +15,6 @@ six = "==1.10.0"
 slackclient = "==1.0.2"
 webencodings = "==0.5"
 websocket-client = "==0.39.0"
-PyYAML = "==3.12"
 
 [requires]
 python_version = "3.6"

@@ -7,8 +7,9 @@ def get_user_id(slackc, user_name):
         for user in users:
             if 'name' in user and user.get('name') == user_name:
                 return user.get('id')
-    
+
     return None
+
 
 """ Get channel ID from name """
 def get_channel_id(slackc, channel_name):
@@ -18,5 +19,5 @@ def get_channel_id(slackc, channel_name):
         for channel in channels:
             if 'name' in channel and channel.get('name') == channel_name:
                 return channel.get('id')
-    
+
     return None
