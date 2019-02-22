@@ -6,7 +6,7 @@
 
 Run Docker prebuilt docker image:
 ```bash
-docker run --env-file default_env -it erikgartner/gordon:latest
+docker run --env-file default_env -it -e TZ=Europe/Stockholm erikgartner/gordon:latest
 ```
 
 Gordon reads its config from the environment that can be set using the `-e` or `--env-file` flags.

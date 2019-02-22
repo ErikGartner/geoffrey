@@ -69,18 +69,20 @@ def post_lunch(dow, channel):
         for dish in dishes:
             resp += '- \t%s\n' % dish
 
-    resp += '\n_Yours Truly_,\n%s' % BOT_NAME
+    resp += '\n_Yours Truly_,\n%s' % CONFIG['BOT_NAME']
 
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
 
 def post_today(channel):
+    print('Posting menus...')
     today = datetime.datetime.today().weekday()
     post_lunch(today, channel)
 
 
 def update_lunch():
     """ Update the menu, caching it """
+    print('Updating menus...')
     for menu in menu_classes:
         # the function caches the menu
         menu().get_week()
