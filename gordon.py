@@ -29,7 +29,7 @@ CONFIG = {
     'API_TOKEN': env.get('API_TOKEN'),
     'MENUS': json.loads(env.get('MENUS', DEFAULT_MENUS)),
     'POST_TIME': env.get('POST_TIME', '8:00'),
-    'UPDATE_TIME': env.get('UPDATE_TIME', '11:00')
+    'UPDATE_TIME': env.get('UPDATE_TIME', '11:00'),
 }
 
 AT_BOT = ''
@@ -55,9 +55,13 @@ weekdays = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
 def post_lunch(dow, channel):
     """ Posts today's menu from all included restaurants """
     # don't post on weekends
-    if dow > 4: return
+    if dow > 4:
+        return
 
-    resp = '*Lunch of the Day (%s):*\n------------------------------------\n\n' % weekdays[dow]
+    resp = (
+        '*Lunch of the Day (%s):*\n------------------------------------\n\n'
+        % weekdays[dow]
+    )
     for menu in menu_classes:
         menu_obj = menu()
         # only show Avesta menu on fridays
@@ -71,7 +75,9 @@ def post_lunch(dow, channel):
 
     resp += '\n_Yours Truly_,\n%s' % CONFIG['BOT_NAME']
 
-    slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+    slackc.api_call(
+        'chat.postMessage', channel=channel, text=resp, as_user=True
+    )
 
 
 def post_today(channel):
@@ -121,7 +127,11 @@ def parse_slack_output(slack_rtm_output):
             if output and 'text' in output and AT_BOT in output['text']:
                 # return text after the @ mention, remove whitespace
                 # also return the channel and the user sending the message
-                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel'], output['user']
+                return (
+                    output['text'].split(AT_BOT)[1].strip().lower(),
+                    output['channel'],
+                    output['user'],
+                )
 
     return None, None, None
 
@@ -135,7 +145,7 @@ if __name__ == '__main__':
     if CONFIG['BOT_CHANNEL_ID'] == '':
         CONFIG['BOT_CHANNEL_ID'] = get_channel_id(slackc, CONFIG['BOT_CHANNEL'])
         if CONFIG['BOT_CHANNEL_ID'] == None:
-            print ('Error: Could not get the bot channel ID')
+            print('Error: Could not get the bot channel ID')
             sys.exit(1)
 
     AT_BOT = '<@%s>' % CONFIG['BOT_ID']
