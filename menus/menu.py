@@ -3,11 +3,11 @@ class Menu:
 
     def __init__(self):
         self.dow = {
-            0: 'Måndag',
-            1: 'Tisdag',
-            2: 'Onsdag',
-            3: 'Torsdag',
-            4: 'Fredag',
+            0: 'måndag',
+            1: 'tisdag',
+            2: 'onsdag',
+            3: 'torsdag',
+            4: 'fredag',
         }
         self.menu = {}
 

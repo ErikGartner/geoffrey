@@ -10,6 +10,13 @@ class Bryggan(Menu):
     def __init__(self):
         super().__init__()
         self.url = 'http://www.bryggancafe.se/veckans-lunch/'
+        self.dow = {
+            0: 'Måndag',
+            1: 'Tisdag',
+            2: 'Onsdag',
+            3: 'Torsdag',
+            4: 'Fredag',
+        }
         self.menu = collections.defaultdict(list)
 
     def __repr__(self):
