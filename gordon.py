@@ -98,44 +98,6 @@ def post_msg(msg, channel):
     slackc.api_call('chat.postMessage', channel=channel, text=msg, as_user=True)
 
 
-def handle_command(command, channel, user):
-    """ Handles mentions in channels """
-    if command.startswith('today'):
-        today = datetime.datetime.today().weekday()
-        post_lunch(today, channel)
-    elif command.startswith('monday'):
-        post_lunch(0, channel)
-    elif command.startswith('tuesday'):
-        post_lunch(1, channel)
-    elif command.startswith('wednesday'):
-        post_lunch(2, channel)
-    elif command.startswith('thursday'):
-        post_lunch(3, channel)
-    elif command.startswith('friday'):
-        post_lunch(4, channel)
-    elif command.startswith('what'):
-        msg = "\"What\" ain't no country I've ever heard of. They speak English in What?"
-        post_msg(msg, channel)
-
-
-def parse_slack_output(slack_rtm_output):
-    """ Parses slack output """
-    output_list = slack_rtm_output
-    if output_list and len(output_list) > 0:
-        for output in output_list:
-            # check if bot was mentioned in a channel
-            if output and 'text' in output and AT_BOT in output['text']:
-                # return text after the @ mention, remove whitespace
-                # also return the channel and the user sending the message
-                return (
-                    output['text'].split(AT_BOT)[1].strip().lower(),
-                    output['channel'],
-                    output['user'],
-                )
-
-    return None, None, None
-
-
 if __name__ == '__main__':
     if CONFIG['BOT_ID'] == '':
         CONFIG['BOT_ID'] = get_user_id(slackc, CONFIG['BOT_NAME'])
@@ -164,8 +126,5 @@ if __name__ == '__main__':
     if slackc.rtm_connect():
         print('%s is ready to serve!' % CONFIG['BOT_NAME'])
         while True:
-            cmd, chn, usr = parse_slack_output(slackc.rtm_read())
-            if cmd and chn and usr:
-                handle_command(cmd, chn, usr)
             schedule.run_pending()
             time.sleep(READ_DELAY)
