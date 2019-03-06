@@ -4,6 +4,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY . ./
 
-RUN pip install -r requirements.txt
+RUN pip install pipenv
+RUN pipenv install --system --ignore-pipfile
 
 ENTRYPOINT ["python", "gordon.py"]
