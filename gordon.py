@@ -64,10 +64,6 @@ def post_lunch(dow, channel):
     )
     for menu in menu_classes:
         menu_obj = menu()
-        # only show Avesta menu on fridays
-        # TODO: this should be entered in the CONFIGig file
-        if dow != 4 and 'Avesta' in str(menu_obj):
-            continue
         dishes = menu_obj.get_day(dow)
         resp += '*%s*\n' % menu_obj
         for dish in dishes:
@@ -123,8 +119,7 @@ if __name__ == '__main__':
     POST_TIME = CONFIG['POST_TIME']
     schedule.every().day.at(POST_TIME).do(post_today, CONFIG['BOT_CHANNEL_ID'])
 
-    if slackc.rtm_connect():
-        print('%s is ready to serve!' % CONFIG['BOT_NAME'])
-        while True:
-            schedule.run_pending()
-            time.sleep(READ_DELAY)
+    print('%s is ready to serve!' % CONFIG['BOT_NAME'])
+    while True:
+        schedule.run_pending()
+        time.sleep(READ_DELAY)
