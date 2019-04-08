@@ -51,11 +51,13 @@ class Bryggan(Menu):
                 last_day = data
                 continue
 
-            # if we reach here, it was probably food, anything that starts with
-            # the string "Dagens:" or "Veg:" is considered food.
-            if last_day and (
-                data.startswith('Dagens:') or data.startswith('Veg:')
-            ):
+            # End of menu.
+            if data.startswith('OBS'):
+                break
+            elif last_day is not None:
                 self.menu[last_day].append(data.strip())
-
         return self.menu
+
+
+if __name__ == '__main__':
+    b = Bryggan()
