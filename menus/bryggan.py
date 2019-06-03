@@ -9,7 +9,7 @@ from menus.menu import Menu
 class Bryggan(Menu):
     def __init__(self):
         super().__init__()
-        self.url = 'http://www.bryggancafe.se/veckans-lunch/'
+        self.url = 'https://www.bryggancafe.se/veckans-lunch/'
         self.dow = {
             0: 'Måndag',
             1: 'Tisdag',
