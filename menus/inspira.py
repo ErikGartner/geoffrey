@@ -12,7 +12,7 @@ class Inspira(Menu):
     def __repr__(self):
         return ":dollar: Inspira"
 
-    def get_week(self):
+    def _get_week(self):
         """
         Fetches the menu data from the given URL, returns a menu dictionary:
         {
