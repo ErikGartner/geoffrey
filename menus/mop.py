@@ -7,7 +7,7 @@ from menus.menu import Menu
 class MOP(Menu):
     def __init__(self):
         super().__init__()
-        self.url = 'http://morotenopiskan.se/lunch/'
+        self.url = 'https://morotenopiskan.se/lunch/'
 
     def __repr__(self):
         return ":carrot: Moroten och Piskan"
